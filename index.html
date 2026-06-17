@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Peña Los Pedales - Concurso de Paellas 2026</title>
+    <!-- Cargando la tipografía Montserrat desde Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -65,23 +66,26 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        /* Contenedor del Logo Corregido */
+        /* Contenedor del Logo Ampliado a 200x200px */
         .logo-container {
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             margin: 0 auto 1.5rem auto;
-            overflow: hidden; /* Mantiene la forma circular */
+            overflow: hidden;
             border: 4px solid white;
-            box-shadow: 0 0 20px rgba(255, 165, 2, 0.6);
-            background-color: var(--color-secundario); /* Fondo por si la imagen tarda en cargar */
+            box-shadow: 0 0 25px rgba(255, 165, 2, 0.6);
+            background-color: rgba(255, 165, 2, 0.15); /* Fondo suave que resalta el PNG transparente */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Imagen del Logo */
+        /* Imagen del Logo Ajustada para Verse Completa */
         .logo-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Ajusta la imagen sin deformarla */
+            width: 90%; /* Deja un pequeño margen estético dentro del círculo */
+            height: 90%;
+            object-fit: contain; /* Encaja la imagen completa sin recortar nada */
         }
 
         header h1 {
@@ -203,7 +207,7 @@
             transition: all 0.2s;
             text-transform: uppercase;
             letter-spacing: 1px;
-            position: relative; /* Necesario para el confeti */
+            position: relative;
         }
 
         .btn-enviar:hover:not(:disabled) {
@@ -211,7 +215,6 @@
             transform: translateY(-2px);
         }
 
-        /* Estilo para el botón cuando ya está desactivado */
         .btn-enviar:disabled {
             background-color: #a4b0be;
             color: #f1f2f6;
@@ -323,6 +326,7 @@
     </div>
 
     <header>
+        <!-- Logo con el nuevo tamaño de 200x200px -->
         <div class="logo-container">
             <img src="Logo pedales.png" alt="Logo Los Pedales" class="logo-image">
         </div>
@@ -375,19 +379,16 @@
         const modal = document.getElementById('modalPedido');
         const selector = document.getElementById('fechaEntrega');
 
-        // Función para bloquear el botón si ya se hizo el pedido
         function verificarPedidoRealizado() {
             if (localStorage.getItem('pedidoRealizado') === 'true') {
                 btnEnviar.innerText = '¡GRACIAS!';
                 btnEnviar.disabled = true;
-                selector.disabled = true; // También bloqueamos el desplegable por coherencia
+                selector.disabled = true;
             }
         }
 
-        // Comprobamos el estado nada más cargar la página
         verificarPedidoRealizado();
 
-        // Función para crear el Confeti
         function createConfetti() {
             const numConfetti = 50;
             const colors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#9b59b6'];
@@ -397,33 +398,32 @@
                 confetti.classList.add('confetti');
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.top = Math.random() * 50 + '%'; // Empieza un poco más arriba
-                confetti.style.animationDelay = Math.random() * 0.5 + 's'; // Retraso aleatorio
-                btnEnviar.appendChild(confetti); // Añade el confeti al botón
+                confetti.style.top = Math.random() * 50 + '%';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                btnEnviar.appendChild(confetti);
             }
         }
 
-        // Al pulsar el botón ENVIAR
         btnEnviar.addEventListener('click', () => {
-            // Guardamos en la memoria del navegador que ya ha pedido
             localStorage.setItem('pedidoRealizado', 'true');
-            
-            // Crea y anima el confeti
             createConfetti();
 
-            // Mostramos el pop-up (después de un pequeño retraso para el confeti)
             setTimeout(() => {
                 modal.classList.add('active');
             }, 500);
             
-            // Aplicamos los cambios visuales de bloqueo al botón inmediatamente
             verificarPedidoRealizado();
         });
 
-        // Al pulsar cerrar en el Pop-up
         btnCerrar.addEventListener('click', () => {
             modal.classList.remove('active');
         });
 
         modal.addEventListener('click', (e) => {
-            if (
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
