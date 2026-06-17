@@ -66,26 +66,26 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        /* Contenedor del Logo Ampliado a 200x200px */
+        /* NUEVO Contenedor del Logo CUADRADO (200x200px) */
         .logo-container {
             width: 200px;
             height: 200px;
-            border-radius: 50%;
+            border-radius: 12px; /* Esquinas ligeramente suaves, ya no es un círculo */
             margin: 0 auto 1.5rem auto;
             overflow: hidden;
-            border: 4px solid white;
-            box-shadow: 0 0 25px rgba(255, 165, 2, 0.6);
-            background-color: rgba(255, 165, 2, 0.15); /* Fondo suave que resalta el PNG transparente */
+            border: 3px solid white;
+            background-color: rgba(255, 165, 2, 0.1); /* Fondo sutil para el PNG transparente */
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
-        /* Imagen del Logo Ajustada para Verse Completa */
+        /* Imagen del Logo Ajustada al Cuadrado */
         .logo-image {
-            width: 90%; /* Deja un pequeño margen estético dentro del círculo */
-            height: 90%;
-            object-fit: contain; /* Encaja la imagen completa sin recortar nada */
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ajusta la imagen completa sin deformar ni recortar */
         }
 
         header h1 {
@@ -207,7 +207,6 @@
             transition: all 0.2s;
             text-transform: uppercase;
             letter-spacing: 1px;
-            position: relative;
         }
 
         .btn-enviar:hover:not(:disabled) {
@@ -223,24 +222,27 @@
             transform: none;
         }
 
-        /* Estilos para el Confeti */
+        /* NUEVOS Estilos globales para el Confeti */
         .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
+            position: fixed; /* Ahora cae relativo a toda la pantalla */
+            width: 12px;
+            height: 12px;
             pointer-events: none;
+            z-index: 9999; /* Por encima de todo */
             opacity: 0;
-            animation: confetti-fall 2s ease-out forwards;
+            animation: confetti-fall 3s ease-out forwards;
         }
 
         @keyframes confetti-fall {
             0% {
-                transform: translate(-50%, -100%) rotate(0deg);
+                transform: translateY(-50px) translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
                 opacity: 1;
             }
             100% {
-                transform: translate(-50%, 100vh) rotate(720deg);
+                transform: translateY(105vh) translateX(100px) rotate(720deg);
                 opacity: 0;
             }
         }
@@ -326,7 +328,7 @@
     </div>
 
     <header>
-        <!-- Logo con el nuevo tamaño de 200x200px -->
+        <!-- Logo en contenedor cuadrado de 200x200px -->
         <div class="logo-container">
             <img src="Logo pedales.png" alt="Logo Los Pedales" class="logo-image">
         </div>
@@ -389,28 +391,50 @@
 
         verificarPedidoRealizado();
 
+        // CORRECCIÓN: Función de Confeti vinculada al cuerpo de la pantalla (body)
         function createConfetti() {
-            const numConfetti = 50;
+            const numConfetti = 80; // Más cantidad para que sea espectacular
             const colors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#9b59b6'];
 
             for (let i = 0; i < numConfetti; i++) {
                 const confetti = document.createElement('div');
                 confetti.classList.add('confetti');
+                
+                // Forma aleatoria (cuadrados y círculos)
+                if(Math.random() > 0.5) {
+                    confetti.style.borderRadius = '50%';
+                }
+
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.top = Math.random() * 50 + '%';
-                confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                btnEnviar.appendChild(confetti);
+                
+                // Posición horizontal aleatoria por toda la pantalla
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-20px'; // Empiezan justo arriba del todo
+                
+                // Retrasos y velocidades aleatorias para un efecto natural
+                confetti.style.animationDelay = Math.random() * 0.8 + 's';
+                confetti.style.width = (Math.random() * 8 + 8) + 'px';
+                confetti.style.height = confetti.style.width;
+
+                document.body.appendChild(confetti);
+
+                // Limpieza del código eliminando el confeti sobrante tras la animación
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3500);
             }
         }
 
         btnEnviar.addEventListener('click', () => {
             localStorage.setItem('pedidoRealizado', 'true');
+            
+            // Disparar confeti corregido
             createConfetti();
 
+            // Retraso controlado para disfrutar del confeti antes del pop-up
             setTimeout(() => {
                 modal.classList.add('active');
-            }, 500);
+            }, 400);
             
             verificarPedidoRealizado();
         });
